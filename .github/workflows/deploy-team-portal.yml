@@ -1,0 +1,35 @@
+name: Deploy Team Portal to Contabo
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/deployment/**'
+      - '.github/workflows/deploy-team-portal.yml'
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    
+    steps:
+      - name: 📦 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🚀 Deploy to Contabo via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 207.180.207.183
+          username: nsa
+          key: ${{ secrets.CONTABO_SSH_KEY }}
+          port: 22
+          script: |
+            echo "=========================================="
+            echo "🚀 Starting Deployment"
+            echo "=========================================="
+            ~/deploy-team-portal.sh
+            echo "=========================================="
+            echo "✅ Deployment Complete!"
+            echo "=========================================="
